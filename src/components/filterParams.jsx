@@ -7,6 +7,7 @@ export default function FilterParam({
   value,
   mask,
   maskAll,
+  setter,
 }) {
   const [show, setShow] = useState(maskAll);
   useEffect(() => {
@@ -16,10 +17,20 @@ export default function FilterParam({
   if (type == "FILTER") {
     return (
       <>
-        {!first ? <span> or </span> : ""}
+        {!first ? (
+          <span className="filterItems" data-flag=" or ">
+            {" "}
+            or{" "}
+          </span>
+        ) : (
+          ""
+        )}
         <span
-          className={show ? "maskFilters" : "flagFilters"}
+          className={
+            show ? "maskFilters filterItems" : "flagFilters filterItems"
+          }
           onClick={() => setShow(+!show)}
+          data-flag={flag}
         >
           {show ? mask : flag}
         </span>
@@ -29,15 +40,28 @@ export default function FilterParam({
     return (
       <>
         {!first ? (
-          <button className="andorSwitcher" onClick={() => setAndor(+!andor)}>
-            {andor == 0 ? " and " : " or "}
+          <button
+            className="andorSwitcher"
+            onClick={() => {
+              setAndor(+!andor), setter();
+            }}
+          >
+            <span
+              className="filterItems"
+              data-flag={andor == 0 ? " and " : " or "}
+            >
+              {andor == 0 ? " and " : " or "}
+            </span>
           </button>
         ) : (
           ""
         )}
         <span
-          className={show ? "maskFilters" : "flagFilters"}
+          className={
+            show ? "maskFilters filterItems" : "flagFilters filterItems"
+          }
           onClick={() => setShow(+!show)}
+          data-flag={flag}
         >
           {show ? mask : flag}
         </span>

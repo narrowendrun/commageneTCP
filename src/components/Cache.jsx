@@ -2,23 +2,13 @@ import { useEffect } from "react";
 import { useState } from "react";
 import FilterParam from "./filterParams";
 
-function copyWIRE() {
-  let output =
-    document.getElementById("wireSTART").textContent +
-    document.getElementById("wireFLOW").textContent +
-    document.getElementById("wireINT").textContent +
-    document.getElementById("wireCMD").textContent +
-    document.getElementById("wireEND").textContent;
-  navigator.clipboard.writeText(output);
-  return output;
-}
-
 export default function CacheSection({ cmdState }) {
   const [state, setState] = useState(cmdState);
   useEffect(() => {
     setState(cmdState);
   }, [cmdState]);
-  const [copystate, setCopyState] = useState([]);
+  const [wire, setWire] = useState("");
+  const [andor, setAndor] = useState(0);
   const [cache, setCache] = useState(() => {
     if (localStorage.getItem("commandCache")) {
       return JSON.parse(localStorage.getItem("commandCache"));
@@ -36,10 +26,7 @@ export default function CacheSection({ cmdState }) {
     timeStyle: "medium",
   });
   //caching only new commands
-  function cacheIT() {
-    let cmd =
-      document.getElementById("firstPartCmd").textContent +
-      document.getElementById("secondPartCmd").textContent;
+  function cacheIT(cmd) {
     let add = 1;
     for (let i = 0; i < cache.length; i++) {
       if (cache[i].command == cmd) {
@@ -109,12 +96,29 @@ export default function CacheSection({ cmdState }) {
       })
       .catch((err) => console.log(err));
   }
-  function copy() {
-    navigator.clipboard.writeText(
-      document.getElementById("commandtocopy").textContent
-    );
-    console.log(document.getElementById("commandtocopy"));
+  function copy(x, y) {
+    let filterItems = document.getElementsByClassName("filterItems");
+    let copyText = "";
+    for (let i = 0; i < filterItems.length; i++) {
+      copyText += filterItems[i].getAttribute("data-flag");
+    }
+    if (x && !y)
+      return document.getElementById("firstPartCmd").textContent + copyText;
+    if (x && y) return " " + copyText;
+    else {
+      navigator.clipboard.writeText(copyText);
+    }
   }
+  function copyWIRE() {
+    return `${document.getElementById("wireSTART").textContent} ${
+      document.getElementById("wireFLOW").textContent
+    } ${document.getElementById("wireINT").textContent} ${copy(1, 1)} ${
+      document.getElementById("wireEND").textContent
+    }`;
+  }
+  useEffect(() => {
+    setWire(copy(1, 1));
+  }, [cmdState.length, andor]);
   return (
     <>
       <div id="commandContainer" className="container">
@@ -164,6 +168,7 @@ export default function CacheSection({ cmdState }) {
                       value={item.type == "PARAMETRE" ? 0 : null}
                       mask={item.mask}
                       maskAll={showhide}
+                      setter={() => setAndor(+!andor)}
                     />
                   );
                 })}
@@ -174,8 +179,8 @@ export default function CacheSection({ cmdState }) {
             <button
               className="btn btn-light copyButton"
               onClick={() => {
-                setShowHide(0), copy(), cacheIT(copy());
-                //logCmd("bashcopy", "na", "na");
+                copy(0), cacheIT(copy(1));
+                logCmd("bashcopy", "na", "na");
               }}
             >
               <svg
@@ -199,7 +204,7 @@ export default function CacheSection({ cmdState }) {
               <span id="wireSTART">ssh root@switch "tcpdump -s 0 -Un -w -</span>
               <span id="wireFLOW"></span>
               <span id="wireINT"></span>
-              <span id="wireCMD"></span>
+              <span id="wireCMD">{wire}</span>
               <span id="wireEND">" | wireshark -k -i -</span>
             </h6>
           </div>

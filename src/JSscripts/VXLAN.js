@@ -26,8 +26,8 @@ function IPtoHEX(ip) {
 export function IP_Logic(key, value) {
   let ip = IPtoHEX(value);
   if (ip) {
-    if (key == "innerSrcIP") return ` udp[42:4] = ${ip}`;
-    if (key == "innerDstIP") return ` udp[46:4] = ${ip}`;
+    if (key == "innerSrcIP") return `udp[42:4] = ${ip}`;
+    if (key == "innerDstIP") return `udp[46:4] = ${ip}`;
   }
   return "";
 }
@@ -47,7 +47,7 @@ export function MAC_Logic(key, value) {
         mac1 = "0x" + mac.slice(0, 4).join("");
         mac2 = "0x" + mac.slice(4, 6).join("");
       } else {
-        return ` invalid mac`;
+        return `invalid mac`;
       }
       //logic for hyphenated MAC addresses
     } else if (value.includes("-")) {
@@ -58,12 +58,12 @@ export function MAC_Logic(key, value) {
         mac1 = "0x" + mac.slice(0, 4).join("");
         mac2 = "0x" + mac.slice(4, 6).join("");
       } else {
-        return ` invalid mac`;
+        return `invalid mac`;
       }
     } else if (value.includes(".")) {
       mac = value.split(".").filter((element) => element.trim() !== "");
       if (mac.length !== 3) {
-        return ` invalid mac`;
+        return `invalid mac`;
       }
       for (let i = 0; i < mac.length; i++) {
         if (mac[i].length < 4) {
@@ -77,14 +77,14 @@ export function MAC_Logic(key, value) {
     //sending the right values according to selection
     if (key == "outermac") return mac;
     if (key == "innerSrcMAC")
-      return ` udp[22:4] = ${mac1} and udp[26:2] = ${mac2}`;
+      return `udp[22:4] = ${mac1} and udp[26:2] = ${mac2}`;
     if (key == "innerDstMAC")
-      return ` udp[16:4] = ${mac1} and udp[20:2] = ${mac2}`;
+      return `udp[16:4] = ${mac1} and udp[20:2] = ${mac2}`;
   } else {
     return ``;
   }
 }
 export function VNI_LOGIC(value) {
-  if (value !== "" && !value.includes(" ")) return ` udp[11:4] = ${value}`;
+  if (value !== "" && !value.includes(" ")) return `udp[11:4] = ${value}`;
   return ``;
 }
