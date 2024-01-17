@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import PPbutton from "./PPbutton";
 import ParamInput from "./ParamInput";
-import { applyLogic } from "./ParamApplyLogic";
+import { applyLogic } from "../JSscripts/ParamApplyLogic";
 
 export default function ParamButton({ dispatch }) {
   const [state, setState] = useState({
@@ -33,6 +33,10 @@ export default function ParamButton({ dispatch }) {
   });
   const _setTextVal = (field, value) => {
     let temp = textVal[field];
+    dispatch({
+      type: "DELETE",
+      payload: { flag: commandText[field], mask: field },
+    });
     setTextVal((prevText) => ({
       ...prevText,
       [field]: value,
@@ -50,125 +54,84 @@ export default function ParamButton({ dispatch }) {
       ...prevState,
       [button]: !temp,
     }));
-    console.log(state[button]);
   };
+  function clearEmAll(array) {
+    for (let i = 0; i < array.length; i++) {
+      let key = array[i];
+      dispatch({
+        type: "DELETE",
+        payload: { flag: commandText[key], mask: key },
+      });
+      _setTextVal(key, "");
+      _setCommandText(key, "");
+    }
+  }
 
   useEffect(() => {
     if (state.VLAN) {
-      dispatch({ type: "DELETE", payload: commandText.VLAN });
+      dispatch({
+        type: "DELETE",
+        payload: { flag: commandText.VLAN, mask: "VLAN" },
+      });
       _setTextVal("VLAN", "");
     }
   }, [state.VLAN]);
   useEffect(() => {
+    let array = ["srcMAC", "dstMAC"];
     if (state.MAC) {
-      dispatch({ type: "DELETE", payload: commandText.srcMAC });
-      dispatch({ type: "DELETE", payload: commandText.dstMAC });
-      _setTextVal("srcMAC", "");
-      _setTextVal("dstMAC", "");
+      clearEmAll(array);
     }
   }, [state.MAC]);
 
   useEffect(() => {
-    let temp =
-      "'" +
-      commandText.VXLAN +
-      commandText.innerSrcMAC +
-      commandText.innerDstMAC +
-      commandText.innerSrcIP +
-      commandText.innerDstIP +
-      commandText.VNI +
-      "'";
     if (state.VXLAN) {
-      dispatch({ type: "DELETE", payload: temp });
-
-      _setTextVal("innerSrcMAC", "");
-      _setTextVal("innerDstMAC", "");
-      _setTextVal("innerSrcIP", "");
-      _setTextVal("innerDstIP", "");
-      _setTextVal("VNI", "");
-      _setCommandText("innerSrcMAC", "");
-      _setCommandText("innerDstMAC", "");
-      _setCommandText("innerSrcIP", "");
-      _setCommandText("innerDstIP", "");
-      _setCommandText("VNI", "");
+      let array = [
+        "VXLAN",
+        "innerSrcMAC",
+        "innerDstMAC",
+        "innerSrcIP",
+        "innerDstIP",
+        "VNI",
+      ];
+      clearEmAll(array);
+      _setCommandText("VXLAN", "port 4789 and udp[8:2] = 0x0800");
     } else if (!state.VXLAN) {
-      dispatch({ type: "PARAMETRE", payload: temp });
+      dispatch({
+        type: "PARAMETRE",
+        payload: { flag: commandText.VXLAN, mask: "all VXLAN" },
+      });
     }
   }, [state.VXLAN]);
 
   useEffect(() => {
-    // Get the previous dataObject value using the ref
+    //over here we are trying to figure out which key has been changed inside textVal and applying logic conditionally
+    // Get the previous textVal object value using the ref
     const prevtextVal = prevtextValRef.current;
 
-    // Iterate through the keys of the current dataObject
+    // Iterate through the keys of the current textVal
     Object.keys(textVal).forEach((key) => {
       const currentValue = textVal[key];
       const prevValue = prevtextVal[key];
 
       // Check if the value for this key has changed
       if (currentValue !== prevValue) {
-        if (key == "srcMAC" || key == "dstMAC") {
-          dispatch({ type: "DELETE", payload: commandText.srcMAC });
-          dispatch({ type: "DELETE", payload: commandText.dstMAC });
-        } else if (key.includes("inner") || key == "VNI") {
-          let temp =
-            "'" +
-            commandText.VXLAN +
-            commandText.innerSrcMAC +
-            commandText.innerDstMAC +
-            commandText.innerSrcIP +
-            commandText.innerDstIP +
-            commandText.VNI +
-            "'";
-          dispatch({ type: "DELETE", payload: temp });
-        } else {
-          dispatch({ type: "DELETE", payload: commandText[key] });
-        }
         let temp_command = applyLogic(textVal, key, textVal[key]);
-        if (typeof temp_command == "object") {
-          _setCommandText("srcMAC", temp_command[0]);
-          _setCommandText("dstMAC", temp_command[1]);
-        } else {
+        if (temp_command !== "" && temp_command !== undefined) {
+          dispatch({
+            type: "DELETE",
+            payload: { flag: commandText[key], mask: key },
+          });
           _setCommandText(key, temp_command);
+          dispatch({
+            type: "PARAMETRE",
+            payload: { flag: temp_command, mask: key },
+          });
         }
       }
     });
-
     // Update the previous dataObject ref with the current value
     prevtextValRef.current = textVal;
   }, [textVal]); // dataObject is the dependency array
-
-  function _dispatch(field, e) {
-    if (e.key == "Enter") {
-      if (field == "srcMAC" || field == "dstMAC") {
-        dispatch({ type: "DELETE", payload: commandText.srcMAC });
-        dispatch({ type: "DELETE", payload: commandText.dstMAC });
-        if (commandText.srcMAC == "") {
-          dispatch({ type: "PARAMETRE", payload: commandText.dstMAC });
-        } else if (commandText.dstMAC == "") {
-          dispatch({ type: "PARAMETRE", payload: commandText.srcMAC });
-        } else {
-          dispatch({ type: "PARAMETRE", payload: commandText.srcMAC });
-          dispatch({ type: "PARAMETRE", payload: commandText.dstMAC });
-        }
-      } else if (field.includes("inner") || field == "VNI") {
-        let temp =
-          "'" +
-          commandText.VXLAN +
-          commandText.innerSrcMAC +
-          commandText.innerDstMAC +
-          commandText.innerSrcIP +
-          commandText.innerDstIP +
-          commandText.VNI +
-          "'";
-        dispatch({ type: "DELETE", payload: temp });
-        dispatch({ type: "PARAMETRE", payload: temp });
-      } else {
-        dispatch({ type: "DELETE", payload: commandText[field] });
-        dispatch({ type: "PARAMETRE", payload: commandText[field] });
-      }
-    }
-  }
 
   return (
     <>
@@ -194,7 +157,6 @@ export default function ParamButton({ dispatch }) {
           title="Enter VLAN"
           value={textVal.VLAN}
           onchange={(e) => _setTextVal("VLAN", e.target.value)}
-          onkeydown={(e) => _dispatch("VLAN", e)}
         />
       )}
       {!state.MAC && (
@@ -206,7 +168,6 @@ export default function ParamButton({ dispatch }) {
                 title="src MAC"
                 value={textVal.srcMAC}
                 onchange={(e) => _setTextVal("srcMAC", e.target.value)}
-                onkeydown={(e) => _dispatch("srcMAC", e)}
               />
             </div>
 
@@ -216,7 +177,6 @@ export default function ParamButton({ dispatch }) {
                 title="dst MAC"
                 value={textVal.dstMAC}
                 onchange={(e) => _setTextVal("dstMAC", e.target.value)}
-                onkeydown={(e) => _dispatch("dstMAC", e)}
               />
             </div>
           </div>
@@ -232,7 +192,6 @@ export default function ParamButton({ dispatch }) {
                 className="form-control"
                 value={textVal.innerSrcMAC}
                 onChange={(e) => _setTextVal("innerSrcMAC", e.target.value)}
-                onKeyDown={(e) => _dispatch("innerSrcMAC", e)}
               />
             </div>
 
@@ -243,7 +202,6 @@ export default function ParamButton({ dispatch }) {
                 className="form-control"
                 value={textVal.innerDstMAC}
                 onChange={(e) => _setTextVal("innerDstMAC", e.target.value)}
-                onKeyDown={(e) => _dispatch("innerDstMAC", e)}
               />
             </div>
           </div>
@@ -256,7 +214,6 @@ export default function ParamButton({ dispatch }) {
                 className="form-control"
                 value={textVal.innerSrcIP}
                 onChange={(e) => _setTextVal("innerSrcIP", e.target.value)}
-                onKeyDown={(e) => _dispatch("innerSrcIP", e)}
               />
             </div>
 
@@ -267,7 +224,6 @@ export default function ParamButton({ dispatch }) {
                 className="form-control"
                 value={textVal.innerDstIP}
                 onChange={(e) => _setTextVal("innerDstIP", e.target.value)}
-                onKeyDown={(e) => _dispatch("innerDstIP", e)}
               />
             </div>
           </div>
@@ -280,7 +236,6 @@ export default function ParamButton({ dispatch }) {
                 className="form-control"
                 value={textVal.VNI}
                 onChange={(e) => _setTextVal("VNI", e.target.value)}
-                onKeyDown={(e) => _dispatch("VNI", e)}
               />
             </div>
           </div>

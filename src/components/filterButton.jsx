@@ -9,7 +9,10 @@ export default function FilterButton({ title, dispatch, protocol }) {
         id={title + "button"}
         value={protocol}
         onClick={() => {
-          dispatch({ type: state ? "FILTER" : "DELETE", payload: protocol });
+          dispatch({
+            type: state ? "FILTER" : "DELETE",
+            payload: { flag: protocol, mask: title },
+          });
           setState(!state);
         }}
         style={{

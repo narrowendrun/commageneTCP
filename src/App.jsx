@@ -15,20 +15,20 @@ function checkVisits() {
     })
     .catch((err) => console.log(err));
 }
-setInterval(checkVisits, 10000);
+//setInterval(checkVisits, 10000);
 
 export default function App() {
   const [isloggedin, setIsLoggedIn] = useState();
-  useEffect(() => {
-    fetch("http://127.0.0.1:5000/commagenetcp/login")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data == "logged out") {
-          window.location.replace("/login");
-        }
-      })
-      .catch((err) => console.log(err));
-  });
+  // useEffect(() => {
+  //   fetch("http://127.0.0.1:5000/commagenetcp/login")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       if (data == "logged out") {
+  //         window.location.replace("/login");
+  //       }
+  //     })
+  //     .catch((err) => console.log(err));
+  // });
   const today = new Date();
   const g = new Intl.DateTimeFormat("en-gb", {
     timeStyle: "medium",
@@ -38,34 +38,34 @@ export default function App() {
     dateStyle: "short",
     timeZone: "GMT",
   });
-  useEffect(() => {
-    fetch("http://127.0.0.1:5000/commagenetcp/analytics", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: "user",
-        date: f.format(today),
-        time: g.format(today),
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   fetch("http://127.0.0.1:5000/commagenetcp/analytics", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       username: "user",
+  //       date: f.format(today),
+  //       time: g.format(today),
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log(data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:5000/commagenetcp/analytics")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data.visits);
-        document.getElementById("visits").textContent = data.visits;
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   fetch("http://127.0.0.1:5000/commagenetcp/analytics")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log(data.visits);
+  //       document.getElementById("visits").textContent = data.visits;
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
 
   return (
     <>
@@ -103,12 +103,7 @@ export default function App() {
       <OptionsContainer />
       <br />
       <FiltersContainer />
-      <br />
-      <SaveToFile />
 
-      <br />
-      <CacheSection />
-      <br />
       <div className="text-center">
         <img id="logo2" src={imgUrl1} />
       </div>

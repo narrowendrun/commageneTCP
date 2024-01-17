@@ -1,13 +1,7 @@
 import { useEffect } from "react";
 import { useState } from "react";
+import FilterParam from "./filterParams";
 
-export function copy() {
-  let output = document.getElementById("commandtocopy").textContent;
-
-  //console.log(output);
-  navigator.clipboard.writeText(output);
-  return output;
-}
 function copyWIRE() {
   let output =
     document.getElementById("wireSTART").textContent +
@@ -19,7 +13,12 @@ function copyWIRE() {
   return output;
 }
 
-export default function CacheSection() {
+export default function CacheSection({ cmdState }) {
+  const [state, setState] = useState(cmdState);
+  useEffect(() => {
+    setState(cmdState);
+  }, [cmdState]);
+  const [copystate, setCopyState] = useState([]);
   const [cache, setCache] = useState(() => {
     if (localStorage.getItem("commandCache")) {
       return JSON.parse(localStorage.getItem("commandCache"));
@@ -30,12 +29,17 @@ export default function CacheSection() {
   useEffect(() => {
     localStorage.setItem("commandCache", JSON.stringify(cache));
   }, [cache]);
+  const [showhide, setShowHide] = useState(0);
   const today = new Date();
   const f = new Intl.DateTimeFormat("en-in", {
     dateStyle: "short",
     timeStyle: "medium",
   });
-  function cacheIT(cmd) {
+  //caching only new commands
+  function cacheIT() {
+    let cmd =
+      document.getElementById("firstPartCmd").textContent +
+      document.getElementById("secondPartCmd").textContent;
     let add = 1;
     for (let i = 0; i < cache.length; i++) {
       if (cache[i].command == cmd) {
@@ -73,6 +77,7 @@ export default function CacheSection() {
       return currentcache.filter((item) => item.id !== id);
     });
   }
+  //for logging the commands analytics
   function logCmd(actionstring, cachetime, commentlength) {
     const today = new Date();
     const g1 = new Intl.DateTimeFormat("en-gb", {
@@ -104,33 +109,73 @@ export default function CacheSection() {
       })
       .catch((err) => console.log(err));
   }
+  function copy() {
+    navigator.clipboard.writeText(
+      document.getElementById("commandtocopy").textContent
+    );
+    console.log(document.getElementById("commandtocopy"));
+  }
   return (
     <>
       <div id="commandContainer" className="container">
+        <div
+          className="form-check form-switch form-check-reverse"
+          id="showHideFilters"
+        >
+          <label htmlFor="flexSwitchCheckChecked" style={{ color: "white" }}>
+            {showhide ? "show" : "hide"}
+          </label>
+          <input
+            className="form-check-input"
+            type="checkbox"
+            role="switch"
+            id="flexSwitchCheckChecked"
+            onChange={() => setShowHide(+!showhide)}
+            checked={showhide ? true : false}
+          />
+        </div>
+
         <br />
         <div className="row ">
           <div className="col-11 commandRow">
             <h6 id="commandtocopy">
-              bash tcpdump -<span id="bashHS"></span>
-              <span id="bashMAC"></span>
-              <span id="bashVERBOSE"></span>
-              <span id="bashTIME"></span>
-              <span id="bashQUICK"></span>
-              <span id="bashINT"></span>
-              <span id="bashCOUNT"></span>
-              <span id="bashFLOW"></span>
-              <span id="bashFILENAME"></span>
-              <span id="bashFILESIZE"></span>
-              <span id="bashFILECOUNT"></span>
-              <span id="bashFREQUENCY"></span>
-              <span id="filterFlags"></span>
+              <span id="firstPartCmd">
+                bash tcpdump -<span id="bashHS"></span>
+                <span id="bashMAC"></span>
+                <span id="bashVERBOSE"></span>
+                <span id="bashTIME"></span>
+                <span id="bashQUICK"></span>
+                <span id="bashINT"></span>
+                <span id="bashCOUNT"></span>
+                <span id="bashFLOW"></span>
+                <span id="bashFILENAME"></span>
+                <span id="bashFILESIZE"></span>
+                <span id="bashFILECOUNT"></span>
+                <span id="bashFREQUENCY"></span>
+              </span>
+              <span id="secondPartCmd">
+                {cmdState.map((item) => {
+                  return (
+                    <FilterParam
+                      key={state.indexOf(item)}
+                      type={item.type}
+                      flag={item.flag}
+                      first={state.indexOf(item) == 0 ? true : false}
+                      value={item.type == "PARAMETRE" ? 0 : null}
+                      mask={item.mask}
+                      maskAll={showhide}
+                    />
+                  );
+                })}
+              </span>
             </h6>
           </div>
           <div className="col-1">
             <button
               className="btn btn-light copyButton"
               onClick={() => {
-                copy(), cacheIT(copy()), logCmd("bashcopy", "na", "na");
+                setShowHide(0), copy(), cacheIT(copy());
+                //logCmd("bashcopy", "na", "na");
               }}
             >
               <svg

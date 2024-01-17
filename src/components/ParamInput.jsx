@@ -4,7 +4,7 @@ export default function ParamInput({
   title,
   value,
   onchange,
-  onkeydown,
+  //onkeydown,
 }) {
   const inputElement = (
     <>
@@ -16,7 +16,7 @@ export default function ParamInput({
         className="form-control"
         value={value}
         onChange={onchange}
-        onKeyDown={onkeydown}
+        //onKeyDown={onkeydown}
       />
     </>
   );

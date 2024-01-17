@@ -6,10 +6,10 @@ export default function Interface() {
   const [state, setState] = useState("");
   useEffect(() => {
     if (state == "") {
-      document.getElementById("bashINT").textContent = "i any";
+      document.getElementById("bashINT").textContent = "i any ";
       document.getElementById("wireINT").textContent = " -i any";
     } else {
-      document.getElementById("bashINT").textContent = "i " + state;
+      document.getElementById("bashINT").textContent = `i ${state} `;
       document.getElementById("wireINT").textContent = " -i " + state;
     }
   }, [state]);
