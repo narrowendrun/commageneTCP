@@ -2,7 +2,7 @@ import { VLANlogic } from "./VLAN";
 import { MACLogic } from "./MAC";
 import * as VXLAN from "./VXLAN";
 
-export function applyLogic(textVal, key, value) {
+export function applyLogic(key, value) {
   if (key == "VLAN") return VLANlogic(value);
   if (key == "srcMAC" || key == "dstMAC") return MACLogic(key, value);
   // if (key == "srcMAC") return MACLogic(value, textVal.dstMAC);

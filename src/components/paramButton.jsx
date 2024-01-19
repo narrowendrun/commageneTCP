@@ -115,7 +115,7 @@ export default function ParamButton({ dispatch }) {
 
       // Check if the value for this key has changed
       if (currentValue !== prevValue) {
-        let temp_command = applyLogic(textVal, key, textVal[key]);
+        let temp_command = applyLogic(key, textVal[key]);
         if (temp_command !== "" && temp_command !== undefined) {
           dispatch({
             type: "DELETE",
