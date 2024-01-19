@@ -11,6 +11,7 @@ img{
 body {
   background-color: #1c1412;
   color: aliceblue;  
+  user-select: none;
 }
 
 .cachecolumn{
@@ -238,8 +239,8 @@ margin-bottom: 5%;
 }
 .maskFilters, .flagFilters{
   cursor: pointer;
-  border: 1px dashed black;
-  padding: 1%;
+  border: 1px solid grey;
+  border-collapse: collapse;
   line-height: 300%;
 }
 .maskFilters{
@@ -259,4 +260,14 @@ margin-bottom: 5%;
   right: 1%;
   margin: 0;
 
+}
+#secondPartCmd{
+  user-select: text;
+}
+#secondPartCmd span::selection {
+  background-color: rgb(204, 85, 38); /* Change the background color */
+  color: black;            /* Change the text color */
+  padding: 5px;            /* Adjust padding */
+  border: 1px solid blue;  /* Adjust border */
+  box-sizing: border-box;  /* Include padding and border in the total width/height */
 }
