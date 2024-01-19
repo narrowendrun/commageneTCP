@@ -9,7 +9,7 @@ const outDir = resolve(__dirname, "dist");
 export default defineConfig({
   root,
   plugins: [react()],
-  base: "/",
+  base: "/commageneTCP/",
   build: {
     outDir,
     emptyOutDir: true,
