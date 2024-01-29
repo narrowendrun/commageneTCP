@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import FilterParam from "./filterParams";
 
-export default function CacheSection({ cmdState }) {
-  const paranthesesArray = [];
+export default function CacheSection({ cmdState, dispatch }) {
   const [state, setState] = useState(cmdState);
   useEffect(() => {
     setState(cmdState);
@@ -121,9 +120,6 @@ export default function CacheSection({ cmdState }) {
     }`;
   }
   const handleTextSelection = () => {
-    // const text = window.getSelection().toString();
-    // console.log(text);
-    // setSelected(text);
     let text = window.getSelection().toString();
     console.log("highlighted : ", text);
     if (text) {
@@ -134,8 +130,6 @@ export default function CacheSection({ cmdState }) {
         .join("*")
         .split("*")
         .filter((value) => value !== "");
-
-      console.log("text : ", text);
 
       let selectedItems = text.map((incompleteStr) => {
         const output = state.filter(
@@ -150,37 +144,13 @@ export default function CacheSection({ cmdState }) {
         .filter((value, index, self) => {
           return self.indexOf(value) === index;
         });
-      console.log("selectedItems : ", selectedItems);
-      let stateKeys = Object.keys(state);
       const start = selectedKeys[0].toString();
       const end = (selectedKeys[selectedKeys.length - 1] + 2).toString();
-      const array1 = stateKeys.slice(0, start); ///.map((i) => state[i]);
-      const array2 = stateKeys
-        .slice(start, end + 1)
-        .map((i) => (parseInt(i) + 1).toString());
-      const array3 = stateKeys
-        .slice(end + 1)
-        .map((i) => (parseInt(i) + 2).toString());
-      let startParanthesis = { type: "parantheses", flag: "'(", mask: "'(" };
-      let endParanthesis = { type: "parantheses", flag: ")'", mask: ")'" };
-      let newDict = [{}];
-      for (let i = 0; i < array1.length; i++) {
-        newDict[array1[i]] = state[array1[i]];
-      }
-      for (let i = 0; i < array2.length; i++) {
-        newDict[array2[i]] = state[array2[i] - 1];
-      }
-      for (let i = 0; i < array3.length; i++) {
-        newDict[array3[i]] = state[array3[i] - 2];
-      }
-      newDict[start] = startParanthesis;
-      newDict[end] = endParanthesis;
-      console.log("keys : ", array1, start, array2, end, array3);
-      console.log("state", state);
-      console.log("newDict", newDict);
-      setState(newDict);
+      dispatch({
+        type: "PLACE",
+        payload: { start: start, end: end },
+      });
       window.getSelection().removeAllRanges();
-      //remove parantheses if already exists in those indeces
     }
   };
   useEffect(() => {
@@ -230,11 +200,7 @@ export default function CacheSection({ cmdState }) {
                   return (
                     <FilterParam
                       key={state.indexOf(item)}
-                      andorBefore={
-                        state[state.indexOf(item) - 1]
-                          ? state[state.indexOf(item) - 1].type
-                          : false
-                      }
+                      paranthesisBefore={item.before ? item.before : false}
                       type={item.type}
                       flag={item.flag}
                       first={state.indexOf(item) == 0 ? true : false}

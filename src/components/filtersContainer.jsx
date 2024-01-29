@@ -35,7 +35,7 @@ export default function FiltersContainer() {
       <SaveToFile />
 
       <br />
-      <CacheSection cmdState={state} />
+      <CacheSection cmdState={state} dispatch={dispatch} />
       <br />
     </>
   );

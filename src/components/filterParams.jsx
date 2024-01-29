@@ -8,7 +8,7 @@ export default function FilterParam({
   mask,
   maskAll,
   setter,
-  andorBefore,
+  paranthesisBefore,
 }) {
   const [show, setShow] = useState(maskAll);
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function FilterParam({
   if (type == "FILTER") {
     return (
       <>
-        {!first && andorBefore != "parantheses" ? (
+        {!first && !paranthesisBefore ? (
           <span
             className="filterItems"
             data-flag=" or "
@@ -44,7 +44,7 @@ export default function FilterParam({
   } else if (type == "PARAMETRE") {
     return (
       <>
-        {!first && andorBefore != "parantheses" ? (
+        {!first && !paranthesisBefore ? (
           <button
             className="andorSwitcher"
             style={{ userSelect: "none" }}
@@ -74,30 +74,38 @@ export default function FilterParam({
       </>
     );
   } else if (type == "parantheses") {
-    if (flag == "'(")
+    if (flag.includes("("))
       return (
         <>
-          <button
-            className="andorSwitcher"
-            style={{ userSelect: "none" }}
-            onClick={() => {
-              setAndor(+!andor), setter();
-            }}
-          >
-            <span
-              className="filterItems"
-              data-flag={andor == 0 ? " and " : " or "}
+          {!paranthesisBefore ? (
+            <button
+              className="andorSwitcher"
+              style={{ userSelect: "none" }}
+              onClick={() => {
+                setAndor(+!andor), setter();
+              }}
             >
-              {andor == 0 ? " and " : " or "}
-            </span>
-          </button>
-          <span>{flag}</span>
+              <span
+                className="filterItems"
+                data-flag={andor == 0 ? " and " : " or "}
+              >
+                {andor == 0 ? " and " : " or "}
+              </span>
+            </button>
+          ) : (
+            ""
+          )}
+          <span className="filterItems" data-flag={flag}>
+            {flag}
+          </span>
         </>
       );
-    if (flag == ")'")
+    if (flag.includes(")"))
       return (
         <>
-          <span>{flag}</span>
+          <span className="filterItems" data-flag={flag}>
+            {flag}
+          </span>
         </>
       );
   }
