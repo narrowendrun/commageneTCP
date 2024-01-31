@@ -6,28 +6,54 @@ This is an experimental tool _(currently in progress)_ that helps users generate
 you can check this out here :
 [https://narrowendrun.github.io/commageneTCP/]
 
-### how to use commageneTCP
+_______________________________________________________________________________
 
-A tcpdump command can be split into
+> #### quick info on tcpdump ####
+> A tcpdump command can be split into :  
+>> 1. option flags
+>> 2. interface
+>> 3. filters
+> 
+> _bash tcpdump (option flags) -i (interface) (filters)_
+   
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-1. option flags
-2. interface
-3. filters
-
-   _bash tcpdump <option flags> -i <interface> <filters>_
-
-###Features present in commageneTCP
-_####OPTIONS
-_ altering verbosity (-v)
-_ changing timestamp (-t)
-_ host and service names (-n)
-_ printing mac address (-e)
-_ enabling quick display (-q)
-_ limiting packet count (-c)
-_ limiting packet flow (-Q)
+### Features present in commageneTCP ###  
+* #### OPTIONS ####
+   * altering verbosity&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(-v)
+   * changing timestamp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(-t)
+   * host and service names&nbsp;(-n)
+   * printing mac address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(-e)
+   * enabling quick display&nbsp;&nbsp;&nbsp;&nbsp;(-q)
+   * limiting packet count &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(-c)
+   * limiting packet flow&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(-Q)
+     
 (Please note that the all changes in the options section will be saved in cache and need not be changed everytime you use the tool. The options section can also be minimised)
+  
+* #### FILTERS ####  
+   * this section has been categorized into _protocols_ and _parametres_
+   * _protocols_ are filters that need no arguments (ex. ARP, OSPFv2)
+   * _parametres_ are filters that may need arguments (ex. VLAN, VXLAN, MAC)
 
-_####FILTERS
-_ this section has been categorized into _protocols_ and _parametres_
-_ *protocols* are filters that need no arguments (ex. ARP, OSPFv2)
-_ _parametres_ are filters that may need arguments (ex. VLAN, VXLAN, MAC)
+* #### COMMAND CACHE 
+   * once the bash command or the wireshark live capture command is copied, it is stored in the command cache section for later reference
+   * users can add their comments to keep track of the commands they have generated
+ 
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  # customising your command
+
+* As users select their filters, they are compounded by default.   
+* Protocols are compounded with an 'or' and this is fixed since a packet cannot be two different protocols at the same time.   
+  (ex. a packet cannot be ARP and LLDP)    
+* Parametres have a customisable button next to them that can switch between 'and' and 'or'.   
+  (ex. a packet can have dst IP A and src IP B)  
+* Filters can be grouped by simply dragging and selecting them
+* Changes are reflected as input is given and users need not hit the enter key
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Hope you like commageneTCP. Happy packet capturing :partying_face:
+
+
+
