@@ -6,6 +6,18 @@ This is an experimental tool _(currently in progress)_ that helps users generate
 you can check this out here :
 [https://narrowendrun.github.io/commageneTCP/]
 
+
+_______________________________________________________________________________
+
+## main highlights of commageneTCP ##
+* generate a bash command and a wireshark live capture command as per your liking
+* the options you select will be saved and you need not customise them every time you visit the page
+* many filters to choose from
+* the commands are generated as soon as there is user input and there is no need for pressing the enter key
+* filters can be compounded
+* filters can be grouped
+* the command you generate will be stored in the command cache as soon as you copy it
+
 _______________________________________________________________________________
 
 > #### quick info on tcpdump ####
