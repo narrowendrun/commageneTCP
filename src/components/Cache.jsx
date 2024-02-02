@@ -128,15 +128,27 @@ export default function CacheSection({ cmdState, dispatch }) {
         .join("*")
         .split(/\s*or\s*/)
         .join("*")
+        .split("'(")
+        .join("*")
+        .split("(")
+        .join("*")
+        .split(")'")
+        .join("*")
+        .split(")")
+        .join("*")
         .split("*")
         .filter((value) => value !== "");
-
+      console.log("cleaned text : ", text);
       let selectedItems = text.map((incompleteStr) => {
         const output = state.filter(
           (item) =>
             item.flag.includes(incompleteStr) ||
             item.mask.includes(incompleteStr)
         );
+        if (output.length > 1) {
+          const [firstKey, firstValue] = Object.entries(output)[0];
+          return { [firstKey]: firstValue };
+        }
         return output;
       });
       const selectedKeys = selectedItems
@@ -144,8 +156,10 @@ export default function CacheSection({ cmdState, dispatch }) {
         .filter((value, index, self) => {
           return self.indexOf(value) === index;
         });
+      console.log("selected items : ", selectedItems);
       const start = selectedKeys[0].toString();
       const end = (selectedKeys[selectedKeys.length - 1] + 2).toString();
+      console.log("start, end : ", start, end);
       dispatch({
         type: "PLACE",
         payload: { start: start, end: end },

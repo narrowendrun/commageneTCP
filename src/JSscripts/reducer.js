@@ -21,9 +21,9 @@ function validGrouping(temp) {
     ) {
       temp[i]["before"] = true;
     }
-    if (temp[i].flag == ")'" && temp[i + 1] && temp[i + 1].flag == ")'") {
-      temp[i].flag = ")";
-    }
+  }
+  if (temp[0] && temp[0].flag.includes("(")) {
+    temp[0]["before"] = "false";
   }
   return temp;
 }
@@ -39,22 +39,12 @@ export function reducer(state, action) {
       let temp = state; //.filter((item) => item.flag !== action.payload.flag);
       for (let i = 0; i < temp.length; i++) {
         if (temp[i].flag == action.payload.flag) {
-          //this condition exists to avoid occurrences like '(ARP)'
+          //this condition exists to avoid occurrences like BGP and '(or ARP and srcMAC)'
           if (
             temp[i - 1] &&
             temp[i - 1].flag.includes("(") &&
-            temp[i + 2] &&
-            temp[i + 2].flag.includes(")")
-          ) {
-            temp.splice(i - 1, 2);
-            temp.splice(i, 1);
-          }
-          //this condition exists to avoid occurrences like BGP and '(or ARP and srcMAC)'
-          else if (
-            temp[i - 1] &&
-            temp[i - 1].flag.includes("(") &&
-            temp[i + 2] &&
-            !temp[i + 2].flag.includes(")")
+            temp[i + 1] &&
+            !temp[i + 1].flag.includes(")")
           ) {
             temp.splice(i, 1);
             temp[i]["before"] = true;
@@ -77,10 +67,7 @@ export function reducer(state, action) {
       }
       keys.splice(action.payload.start, 0, action.payload.start.toString());
       keys.splice(action.payload.end, 0, action.payload.end.toString());
-      // if (
-      //   values[parseInt(action.payload.start) - 1] &&
-      //   values[parseInt(action.payload.start) - 1]["flag"] != "'("
-      // ) {
+
       values.splice(action.payload.start, 0, {
         type: "parantheses",
         flag: "'(",
@@ -96,34 +83,40 @@ export function reducer(state, action) {
       for (let i = 0; i < keys.length; i++) {
         newDict[keys[i]] = values[i];
       }
+      newDict = validGrouping(newDict);
 
       //this condition exists to avoid occurrences like '(..'(...)')'
       //having '' only for the outermost parantheses
-      let removeQuote = 1;
+      let children = [];
       let pairCount = 0;
-      let index = newDict.findIndex((item) => item.flag === "'(") + 1;
-      let startIndex = newDict.findIndex((item) => item.flag === "'(") + 1;
-      while (removeQuote && index < newDict.length) {
-        if (newDict[index] && newDict[index]["flag"] == "'(") pairCount++;
-        if (newDict[index] && newDict[index]["flag"] == ")'") removeQuote = 0;
-        index++;
-      }
-      pairCount *= 2;
-      console.log("startIndex, pairCount : ", startIndex, pairCount);
-      while (pairCount) {
-        if (newDict[startIndex]["flag"] == "'(") {
-          newDict[startIndex]["flag"] = "(";
-          pairCount--;
+      for (let i = 0; i < newDict.length; i++) {
+        children = [];
+        if (newDict[i].flag == "'(") {
+          children.push(i);
+          pairCount++;
+          while (pairCount && i < newDict.length - 1) {
+            i++;
+            if (newDict[i].flag == "'(") {
+              pairCount++;
+              children.push(i);
+            }
+            if (newDict[i].flag == ")'") {
+              pairCount--;
+              children.push(i);
+            }
+          }
+          children = children.slice(0, -1).slice(1);
+          for (let j = 0; j < children.length; j++) {
+            if (newDict[children[j]].flag == "'(")
+              newDict[children[j]].flag = "(";
+            if (newDict[children[j]].flag == ")'")
+              newDict[children[j]].flag = ")";
+          }
         }
+      }
 
-        if (newDict[startIndex]["flag"] == ")'") {
-          newDict[startIndex]["flag"] = ")";
-          pairCount--;
-        }
-        startIndex++;
-      }
       //ensuring only valid grouping takes place
-      newDict = validGrouping(newDict);
+      //newDict = validGrouping(newDict);
       return newDict;
     default:
       return state;
