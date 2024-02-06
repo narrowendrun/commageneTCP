@@ -114,6 +114,7 @@ export function reducer(state, action) {
           children = [];
           if (newDict[i].flag == "'(") {
             pairCount++;
+            i++;
             while (pairCount && i < newDict.length) {
               if (newDict[i].flag == "'(") {
                 pairCount++;
@@ -122,10 +123,12 @@ export function reducer(state, action) {
                 pairCount--;
                 children.push(i);
               }
+              console.log("i at : ", i, "paircount at : ", pairCount);
+              console.log(newDict[i].flag);
               i++;
             }
             console.log("all paranthesis indices : ", children);
-            children = children.slice(0, -1).slice(1);
+            children = children.slice(0, -1);
             console.log("children : ", children);
             for (let j = 0; j < children.length; j++) {
               if (newDict[children[j]].flag == "'(")
