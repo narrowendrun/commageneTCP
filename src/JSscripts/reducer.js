@@ -5,7 +5,11 @@ function validGrouping(temp) {
   for (let i = 0; i < temp.length; i++) {
     //this condition exists to avoid occurrences like '(ARP)'
     if (temp[i].flag.includes("(") && temp[i + 2].flag.includes(")")) {
-      temp[i + 1]["before"] = false;
+      if (temp[i - 1].flag.includes("(")) {
+        temp[i + 1].before = true;
+      } else {
+        temp[i + 1].before = false;
+      }
       temp.splice(i, 1);
       temp.splice(i + 1, 1);
     }
