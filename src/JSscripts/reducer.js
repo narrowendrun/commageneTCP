@@ -67,57 +67,77 @@ export function reducer(state, action) {
       }
       keys.splice(action.payload.start, 0, action.payload.start.toString());
       keys.splice(action.payload.end, 0, action.payload.end.toString());
+      console.log("before : ", state);
+      if (
+        state[action.payload.start - 1] &&
+        state[action.payload.start - 1].type == "parantheses" &&
+        state[action.payload.start - 1].flag.includes("(") &&
+        state[action.payload.end - 1] &&
+        state[action.payload.end - 1].type == "parantheses" &&
+        state[action.payload.end - 1].flag.includes(")")
+      ) {
+        let temp = state.slice();
+        console.log(
+          "deleting brackets from : ",
+          action.payload.start - 1,
+          action.payload.end - 2
+        );
+        temp.splice(action.payload.start - 1, 1);
+        temp.splice(action.payload.end - 2, 1);
+        temp[action.payload.start - 1]["before"] = false;
+        console.log("after : ", temp);
+        return temp;
+      } else {
+        values.splice(action.payload.start, 0, {
+          type: "parantheses",
+          flag: "'(",
+          mask: "'(",
+        });
+        values.splice(action.payload.end, 0, {
+          type: "parantheses",
+          flag: ")'",
+          mask: ")'",
+        });
+        values[parseInt(action.payload.start) + 1]["before"] = true;
+        let newDict = [];
+        for (let i = 0; i < keys.length; i++) {
+          newDict[keys[i]] = values[i];
+        }
+        newDict = validGrouping(newDict);
 
-      values.splice(action.payload.start, 0, {
-        type: "parantheses",
-        flag: "'(",
-        mask: "'(",
-      });
-      values.splice(action.payload.end, 0, {
-        type: "parantheses",
-        flag: ")'",
-        mask: ")'",
-      });
-      values[parseInt(action.payload.start) + 1]["before"] = true;
-      let newDict = [];
-      for (let i = 0; i < keys.length; i++) {
-        newDict[keys[i]] = values[i];
-      }
-      newDict = validGrouping(newDict);
-
-      //this condition exists to avoid occurrences like '(..'(...)')'
-      //having '' only for the outermost parantheses
-      let children = [];
-      let pairCount = 0;
-      for (let i = 0; i < newDict.length; i++) {
-        children = [];
-        if (newDict[i].flag == "'(") {
-          children.push(i);
-          pairCount++;
-          while (pairCount && i < newDict.length - 1) {
-            i++;
-            if (newDict[i].flag == "'(") {
-              pairCount++;
-              children.push(i);
+        //this condition exists to avoid occurrences like '(..'(...)')'
+        //having '' only for the outermost parantheses
+        let children = [];
+        let pairCount = 0;
+        for (let i = 0; i < newDict.length; i++) {
+          pairCount = 0;
+          children = [];
+          if (newDict[i].flag == "'(") {
+            pairCount++;
+            while (pairCount && i < newDict.length) {
+              if (newDict[i].flag == "'(") {
+                pairCount++;
+                children.push(i);
+              } else if (newDict[i].flag == ")'") {
+                pairCount--;
+                children.push(i);
+              }
+              i++;
             }
-            if (newDict[i].flag == ")'") {
-              pairCount--;
-              children.push(i);
+            console.log("all paranthesis indices : ", children);
+            children = children.slice(0, -1).slice(1);
+            console.log("children : ", children);
+            for (let j = 0; j < children.length; j++) {
+              if (newDict[children[j]].flag == "'(")
+                newDict[children[j]].flag = "(";
+              if (newDict[children[j]].flag == ")'")
+                newDict[children[j]].flag = ")";
             }
-          }
-          children = children.slice(0, -1).slice(1);
-          for (let j = 0; j < children.length; j++) {
-            if (newDict[children[j]].flag == "'(")
-              newDict[children[j]].flag = "(";
-            if (newDict[children[j]].flag == ")'")
-              newDict[children[j]].flag = ")";
           }
         }
+        return newDict;
       }
 
-      //ensuring only valid grouping takes place
-      //newDict = validGrouping(newDict);
-      return newDict;
     default:
       return state;
   }
