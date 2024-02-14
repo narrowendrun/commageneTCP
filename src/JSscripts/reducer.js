@@ -3,9 +3,10 @@ function newFilterParam(kind, payload) {
 }
 function validGrouping(temp) {
   for (let i = 0; i < temp.length; i++) {
+    console.log(`temp at i = ${i} : `, temp);
     //this condition exists to avoid occurrences like '(ARP)'
     if (temp[i].flag.includes("(") && temp[i + 2].flag.includes(")")) {
-      if (temp[i - 1].flag.includes("(")) {
+      if (temp[i - 1] && temp[i - 1].flag.includes("(")) {
         temp[i + 1].before = true;
       } else {
         temp[i + 1].before = false;
@@ -40,6 +41,7 @@ export function reducer(state, action) {
       return [...state, newFilterParam("PARAMETRE", action.payload)];
 
     case "DELETE":
+      console.log("deleting", action.payload);
       let temp = state; //.filter((item) => item.flag !== action.payload.flag);
       for (let i = 0; i < temp.length; i++) {
         if (temp[i].flag == action.payload.flag) {
@@ -60,6 +62,26 @@ export function reducer(state, action) {
       temp = validGrouping(temp);
       return [...temp];
 
+    case "REPLACE":
+      let stateCopy = state;
+      let flag = 1;
+      console.log("statecopy before : ", stateCopy);
+      for (let i = 0; i < stateCopy.length; i++) {
+        if (stateCopy[i].flag == action.payload.place) {
+          flag = 0;
+          stateCopy[i].flag = action.payload.replace;
+        }
+      }
+      if (flag)
+        console.log("couldn't find to replace with ", action.payload.replace);
+      else
+        console.log(
+          "replaced ",
+          action.payload.place,
+          "with ",
+          action.payload.replace
+        );
+      return [...stateCopy];
     case "PLACE":
       let keys = Object.keys(state);
       let values = Object.values(state);

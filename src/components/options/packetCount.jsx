@@ -18,14 +18,14 @@ export default function PacketCount() {
   return (
     <>
       <div className="container option">
-        <label htmlFor="packet_input">
+        <label htmlFor="count_input">
           Packet count?
           <span id="errorMSG" style={{ display: "none" }}>
             &ensp; (enter only integers)
           </span>
         </label>
         <input
-          id="packet_input"
+          id="count_input"
           type="text"
           className="form-control"
           placeholder="leave blank for no limit"

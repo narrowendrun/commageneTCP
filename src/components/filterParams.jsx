@@ -95,7 +95,7 @@ export default function FilterParam({
           ) : (
             ""
           )}
-          <span className="filterItems" data-flag={flag}>
+          <span className="filterItems  parantheses" data-flag={flag}>
             {flag}
           </span>
         </>
@@ -103,7 +103,7 @@ export default function FilterParam({
     if (flag.includes(")"))
       return (
         <>
-          <span className="filterItems" data-flag={flag}>
+          <span className="filterItems  parantheses" data-flag={flag}>
             {flag}
           </span>
         </>

@@ -11,7 +11,7 @@ img{
 body {
   background-color: #1c1412;
   color: aliceblue;  
-  user-select: none;
+  /* user-select: none; */
 }
 
 .cachecolumn{
@@ -239,13 +239,13 @@ margin-bottom: 5%;
 }
 .maskFilters, .flagFilters{
   cursor: pointer;
-  border: 1px solid grey;
+  border: 1px dotted grey;
   border-collapse: collapse;
+  padding: 0.5%;
   line-height: 300%;
 }
 .maskFilters{
-  background-color: rgb(218, 165, 32,0.5);
-
+  background-color:chartreuse
 }
 #commandContainer .form-switch .form-check-input:checked {
   background-color: #30D158;
@@ -264,10 +264,8 @@ margin-bottom: 5%;
 #secondPartCmd{
   user-select: text;
 }
-#secondPartCmd span::selection {
-  background-color: rgb(204, 85, 38); /* Change the background color */
-  color: black;            /* Change the text color */
-  padding: 5px;            /* Adjust padding */
-  border: 1px solid blue;  /* Adjust border */
-  box-sizing: border-box;  /* Include padding and border in the total width/height */
+
+.parantheses{
+font-size:1.5em;
+font-weight: 900;
 }

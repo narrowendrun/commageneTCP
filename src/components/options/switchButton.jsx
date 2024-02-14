@@ -25,7 +25,7 @@ export default function SwitchButton({ option, filename, flag, span, title }) {
           style={{ margin: "1% 2% 0 0" }}
           onChange={(e) => setState(e.target.checked.toString())}
         />
-        <label className="form-check-label" htmlFor="quickDisplay">
+        <label className="form-check-label" htmlFor={option}>
           {title}
         </label>
       </div>

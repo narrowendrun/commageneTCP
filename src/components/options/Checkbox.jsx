@@ -82,7 +82,7 @@ export default function CheckBox({
                 disabled={disableCondition && !("true" === state2)}
                 onChange={(e) => setState1(e.target.checked.toString())}
               />
-              <label className="form-check-label" htmlFor="flexCheckDefault">
+              <label className="form-check-label" htmlFor={flagOption[0]}>
                 {flagOption[0]}
               </label>
             </div>
@@ -96,7 +96,7 @@ export default function CheckBox({
                 id={flagOption[1]}
                 onChange={(e) => setState2(e.target.checked.toString())}
               />
-              <label className="form-check-label" htmlFor="flexCheckChecked">
+              <label className="form-check-label" htmlFor={flagOption[1]}>
                 {flagOption[1]}
               </label>
             </div>

@@ -297,7 +297,7 @@ export default function CacheSection({ cmdState, dispatch }) {
                 <textarea
                   className="form-control"
                   placeholder="user comments"
-                  id="floatingTextarea"
+                  id={"floatingTextarea" + item.id}
                   value={item.comments}
                   onChange={(e) => setComments(item.id, e.target.value)}
                 ></textarea>

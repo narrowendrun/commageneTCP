@@ -32,11 +32,10 @@ export default function ParamButton({ dispatch }) {
     VNI: "",
   });
   const _setTextVal = (field, value) => {
-    let temp = textVal[field];
-    dispatch({
-      type: "DELETE",
-      payload: { flag: commandText[field], mask: field },
-    });
+    // dispatch({
+    //   type: "DELETE",
+    //   payload: { flag: commandText[field], mask: field },
+    // });
     setTextVal((prevText) => ({
       ...prevText,
       [field]: value,
@@ -127,6 +126,15 @@ export default function ParamButton({ dispatch }) {
             payload: { flag: temp_command, mask: key },
           });
         }
+        console.log("prevValue : ", prevValue);
+        // console.log("current temp command : ", temp_command);
+        // if (temp_command == "") {
+        //   dispatch({
+        //     type: "REPLACE",
+        //     payload: { place: commandText[key], mask: key, replace: "" },
+        //   });
+        //   _setCommandText(key, "");
+        // }
       }
     });
     // Update the previous dataObject ref with the current value
