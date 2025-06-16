@@ -1,4 +1,4 @@
-export default function FilterToggleButton({ filterName, filter, setFilters, andor }) {
+export default function FilterToggleButton({ filterName, filter, setFilters, andor, edit }) {
   const handleClick = () => {
   setFilters((prevFilters) => {
     const newFilters = { ...prevFilters };
@@ -7,7 +7,8 @@ export default function FilterToggleButton({ filterName, filter, setFilters, and
     newFilters[index] = {
       andor: andor,
       filter: filter,
-      name: filterName
+      name: filterName,
+      edit: edit
     };
     return newFilters;
   });

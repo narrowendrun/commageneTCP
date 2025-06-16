@@ -15,6 +15,10 @@ function App() {
     interface:"i any",
     packetCount:"",
     flowDirection:"",
+    filename: "",
+    filesize: "",
+    filecount: "",
+    filefrequency: ""
   })
   const [filters, setFilters] = useState({})
 
