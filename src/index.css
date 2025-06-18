@@ -1,78 +1,82 @@
-#root{
-    position: absolute;
-    background: #254D70;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
+#root {
+  position: absolute;
+  background: #254d70;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
 }
-#logo1{
-    width: 80%;
+#logo1 {
+  width: 80%;
 }
-.section{
-    background-color: #131D4F;
-    color: aliceblue;
-    padding: 2.5%;
-    box-shadow: 15px -15px #E3D095;
+.section {
+  background-color: #131d4f;
+  color: aliceblue;
+  padding: 2.5%;
+  box-shadow: 15px -15px #e3d095;
 }
-#packet_input, #interface_input, #filename{
-    border-radius: 0;
+#packet_input,
+#interface_input,
+#filename {
+  border-radius: 0;
 }
-#optionsHeader{ 
-    cursor: pointer; 
-    user-select: none;
+#optionsHeader {
+  cursor: pointer;
+  user-select: none;
 }
-.optionsColumn{
-    margin: 1.5%;
-    padding: 1%;
-    background: rgba(37, 77, 112,0.5);
-    box-shadow: -8px 8px #FFFBDE;
+.optionsColumn {
+  margin: 1.5%;
+  padding: 1%;
+  background: rgba(37, 77, 112, 0.5);
+  box-shadow: -8px 8px #fffbde;
 }
-.outputContainer{
-    background-color: #B6F500;
-    box-shadow: 15px -15px #BE3D2A;
-    padding: 5%;
+.outputContainer {
+  position: relative;
+  background-color: #b6f500;
+  box-shadow: 15px -15px #be3d2a;
+  padding: 5%;
 }
-.commandContainer{
-    position: relative;
-    background-color: #E9A319;
-    box-shadow: -10px 15px #BE3D2A;
-    padding: 0.5%;
-    font-family: monospace;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.commandContainer {
+  position: relative;
+  background-color: #e9a319;
+  box-shadow: -10px 15px #be3d2a;
+  padding: 0.5%;
+  font-family: monospace;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.copyButton{
-    position: relative;
-    background-color: aliceblue; 
-    height: 100%;  
-    padding: 1%;
-    font-size: 1.5em;
+.copyButton {
+  position: relative;
+  background-color: aliceblue;
+  height: 100%;
+  padding: 1%;
+  font-size: 1.5em;
+  cursor: pointer;
 }
-.commandColumn{
-    margin: 1%;
+.commandColumn {
+  margin: 1%;
 }
-#firstPartCommand{
-    display: inline-block;
-    width: auto;
-    margin: 0;
-    white-space: nowrap; 
+#firstPartCommand {
+  display: inline-block;
+  width: auto;
+  margin: 0;
+  white-space: nowrap;
 }
-.filterButton{
-    all: unset;
-    width: 20%;
-    text-align: center;
-    margin: 7.5px;
-    transition: all 0.2s ease;
-    background-color: #FF9B45;
-    color: #521C0D;
-    box-shadow: 5px -5px #FFF0DC;
+.filterButton {
+  all: unset;
+  width: 20%;
+  text-align: center;
+  margin: 7.5px;
+  transition: all 0.2s ease;
+  background-color: #ff9b45;
+  color: #521c0d;
+  box-shadow: 5px -5px #fff0dc;
 }
-.filterButton:active{
-    transform: scale(0.9);
-    background-color: #FFF0DC;
-    color: #521C0D;
-    box-shadow: 5px -5px #FF9B45;
+.filterButton:active {
+  transform: scale(0.9);
+  background-color: #fff0dc;
+  color: #521c0d;
+  box-shadow: 5px -5px #ff9b45;
 }
 .filterOutputsContainer {
   display: flex;
@@ -87,7 +91,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: rgba(82, 28, 13,0.15);
+  background-color: rgba(82, 28, 13, 0.15);
   padding: 5px;
   border-radius: 5px;
 }
@@ -96,28 +100,54 @@
   display: inline-block;
   width: auto;
   margin: 0;
-  white-space: nowrap; 
+  white-space: nowrap;
   border: 1.5px dashed black;
   padding: 5px;
 }
-.filterDeleteButton, .filterEditButton{
-    position: relative;
-    right: -8px;
-    top: -15px;
-    z-index: 15;
-    font-size: 1.5em;
-    cursor: pointer;
+.filterDeleteButton,
+.filterEditButton {
+  position: relative;
+  right: -8px;
+  top: -15px;
+  z-index: 15;
+  font-size: 1.5em;
+  cursor: pointer;
 }
-.filterEditButton{
-    top: 12px;
-    right: -42px;
+.filterEditButton {
+  top: 12px;
+  right: -42px;
 }
-.filtereditform{
-    position: absolute;
-    background-color: #819A91;
-    width: 200%;
-    z-index: 16;
-    padding: 5%;
-    top: 100%;
-    box-shadow: 0px 8px 8px #000; 
+.filtereditform {
+  position: absolute;
+  background-color: #819a91;
+  width: 200%;
+  max-width: 650px;
+  z-index: 16;
+  padding: 5%;
+  top: 100%;
+  box-shadow: 0px 8px 8px #000;
+}
+.filterFormSwitcherButton {
+  position: relative;
+}
+.filterFormSwitcherButton button {
+  padding: 1%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+.showHideFilters {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 50px;
+  height: 35px;
+  padding: 0;
+  text-align: center;
+  background-color: rgba(82, 28, 13, 0.15);
+  cursor: pointer;
+}
+.showHideButton {
+  font-size: 2em;
 }
