@@ -138,7 +138,11 @@ export default function MACForm({ setFilters, index, currentFilter }) {
   const handleAndOrToggle = () => {
     const newAndor = andor === "or" ? "and" : "or";
     setAndor(newAndor);
-
+    // setFilters((prevFilters) => {
+    //   let newFilters = { ...prevFilters };
+    //   newFilters[index].andorVal = newAndor;
+    //   return newFilters;
+    // });
     // Update filter with new and/or value
     updateFilter(MACs, newAndor);
   };
@@ -148,7 +152,7 @@ export default function MACForm({ setFilters, index, currentFilter }) {
       <div className="row">
         <div className="col">
           <label htmlFor="srcMAC_input" className="form-label">
-            Inner Src MAC
+            src MAC
           </label>
           <input
             id="srcMAC_input"
@@ -169,7 +173,7 @@ export default function MACForm({ setFilters, index, currentFilter }) {
 
         <div className="col">
           <label htmlFor="dstMAC_input" className="form-label">
-            Inner Dst MAC
+            dst MAC
           </label>
           <input
             id="dstMAC_input"

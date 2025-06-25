@@ -166,3 +166,37 @@
 .showHideButton {
   font-size: 2em;
 }
+
+.commandCacheEntry {
+  padding: 2%;
+  margin: 1%;
+  background: rgba(37, 77, 112, 0.5);
+  position: relative;
+  width: 95%;
+  left: 2.5%;
+  box-shadow: 5px -5px #fff0dc;
+}
+.commandEntryColumn {
+  background-color: #131d4f;
+  margin: 5px;
+  text-align: center;
+  padding: 1%;
+}
+.cacheEntryButton {
+  font-size: 1.8em;
+}
+.wiresharkContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.wiresharkContainer p {
+  margin: 0;
+  max-width: 100%;
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+  flex-shrink: 0;
+}

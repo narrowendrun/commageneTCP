@@ -39,10 +39,16 @@ export default function FiltersOutput({
 
   // New function to handle and/or button toggle
   const handleAndOrToggle = (index) => {
+    const newAndor = buttonTexts[index] === "and" ? "or" : "and";
     setButtonTexts((prev) => ({
       ...prev,
-      [index]: prev[index] === "and" ? "or" : "and",
+      [index]: newAndor,
     }));
+    setFilters((prevFilters) => {
+      let newFilters = { ...prevFilters };
+      newFilters[index].andorVal = newAndor;
+      return newFilters;
+    });
   };
 
   return (
@@ -69,7 +75,7 @@ export default function FiltersOutput({
         {Object.keys(filters).map((index) => {
           const firstIndex = Math.min(...Object.keys(filters).map(Number));
           const showEditForm = showEditForms[index] ?? false;
-          const currentButtonText = buttonTexts[index] || "or"; // Default to "or"
+          const currentButtonText = buttonTexts[index] || "or";
 
           return (
             <div className="filter_div" key={index}>
@@ -83,11 +89,7 @@ export default function FiltersOutput({
                 )
               ) : null}
               <p className="filter_p" onClick={() => handleToggle(index)}>
-                {showHide
-                  ? filters[index].filter
-                  : !showNames[index]
-                  ? filters[index].filter
-                  : filters[index].name}
+                {!showHide ? filters[index].filter : filters[index].name}
               </p>
               {filters[index].edit ? (
                 <TiEdit

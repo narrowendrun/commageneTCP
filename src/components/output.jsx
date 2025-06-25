@@ -2,10 +2,17 @@ import { MdOutlineContentCopy } from "react-icons/md";
 import { BiSolidShow, BiSolidHide } from "react-icons/bi";
 import FiltersOutput from "./filterOutput";
 import { useState } from "react";
+import React from "react";
 
-export default function Output({ optionsFlags, filters, setFilters }) {
+export default function Output({
+  optionsFlags,
+  filters,
+  setFilters,
+  setCommandCache,
+}) {
   const [showHide, setShowHide] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copied2, setCopied2] = useState(false);
 
   const handleCopyFilters = async () => {
     try {
@@ -19,32 +26,87 @@ export default function Output({ optionsFlags, filters, setFilters }) {
       const textContent = (container.innerText || container.textContent)
         .replace(/\s+/g, " ") // Replace all whitespace (including newlines) with single spaces
         .trim(); // Remove leading/trailing whitespace
-
       await navigator.clipboard.writeText(textContent);
+      setCommandCache((currentcache) => {
+        const isDuplicate = Object.values(currentcache).some(
+          (entry) => entry.command === textContent
+        );
+
+        if (isDuplicate) {
+          return currentcache; // Duplicate detected; no need to update or store.
+        }
+
+        const today = new Date();
+        const f = new Intl.DateTimeFormat("en-in", {
+          dateStyle: "short",
+          timeStyle: "short",
+        });
+        const id = crypto.randomUUID();
+
+        const newCache = {
+          ...currentcache,
+          [id]: {
+            id,
+            date: f.format(today),
+            command: textContent,
+            comments: "",
+          },
+        };
+        localStorage.setItem("tcp_commandCache", JSON.stringify(newCache));
+
+        return newCache;
+      });
     } catch (error) {
       console.error("Failed to copy content:", error);
-
-      try {
-        const container = document.querySelector(".filterOutputsContainer");
-        const cleanedText = (container.innerText || container.textContent)
-          .replace(/\s+/g, " ")
-          .trim();
-
-        const textArea = document.createElement("textarea");
-        textArea.value = cleanedText;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-        console.log("Content copied using fallback method!");
-      } catch (fallbackError) {
-        console.error("Fallback copy method also failed:", fallbackError);
-      }
     }
 
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+  function copyWireshark() {
+    const container = document.querySelector(".wiresharkContainer");
+    if (!container) return;
+    const textToCopy = container.textContent.trim();
+
+    navigator.clipboard
+      .writeText(textToCopy)
+      .then(() => {
+        setCopied2(true);
+        setTimeout(() => setCopied(false), 2000);
+        setCommandCache((currentcache) => {
+          const isDuplicate = Object.values(currentcache).some(
+            (entry) => entry.command === textToCopy
+          );
+
+          if (isDuplicate) {
+            return currentcache; // Duplicate detected; no need to update or store.
+          }
+
+          const today = new Date();
+          const f = new Intl.DateTimeFormat("en-in", {
+            dateStyle: "short",
+            timeStyle: "short",
+          });
+          const id = crypto.randomUUID();
+
+          const newCache = {
+            ...currentcache,
+            [id]: {
+              id,
+              date: f.format(today),
+              command: textToCopy,
+              comments: "",
+            },
+          };
+          localStorage.setItem("tcp_commandCache", JSON.stringify(newCache));
+
+          return newCache;
+        });
+      })
+      .catch((err) => {
+        console.error("Copy failed, my liege:", err);
+      });
+  }
 
   return (
     <>
@@ -107,11 +169,47 @@ export default function Output({ optionsFlags, filters, setFilters }) {
 
         <div id="wiresharkContainer" className="container">
           <div className="row">
-            <div className="commandContainer col commandColumn">
-              <span>wireshark</span>
+            <div className="wiresharkContainer commandContainer col commandColumn">
+              <p>{`ssh root@switch "tcpdump -s 0 -Un -w - -${optionsFlags.interface} `}</p>
+              {Object.keys(filters).map((index) => {
+                const firstIndex = Math.min(
+                  ...Object.keys(filters).map(Number)
+                );
+                return (
+                  <React.Fragment key={index}>
+                    <p>
+                      {firstIndex.toString() !== index
+                        ? filters[index].andor
+                          ? filters[index].andorVal
+                          : "or"
+                        : ""}
+                    </p>
+                    <p>{filters[index].filter}</p>
+                  </React.Fragment>
+                );
+              })}
+              <p>" | wireshark -k -i -</p>
             </div>
             <div className="col-1 copyButton commandColumn">
-              <MdOutlineContentCopy />
+              <MdOutlineContentCopy onClick={() => copyWireshark()} />
+              {copied2 && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: "0",
+                    backgroundColor: "#28a745",
+                    color: "white",
+                    padding: "2px 6px",
+                    fontSize: "0.75rem",
+                    borderRadius: "4px",
+                    transition: "opacity 0.3s",
+                    zIndex: 10,
+                  }}
+                >
+                  Copied!
+                </span>
+              )}
             </div>
           </div>
         </div>

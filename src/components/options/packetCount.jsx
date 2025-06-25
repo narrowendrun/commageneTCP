@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
 
 export default function PacketCount({ setOptionsFlags }) {
-  const [value, setValue] = useState(() => 
-    localStorage.getItem("packet_count") || ""
+  const [value, setValue] = useState(
+    () => localStorage.getItem("tcp_packetCount") || ""
   );
-  
+
   const [error, setError] = useState("");
 
   const isValidInteger = (input) => {
-    if (input === "") return true; 
+    if (input === "") return true;
     const num = parseInt(input, 10);
     return !isNaN(num) && num > 0 && num.toString() === input;
   };
 
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
-    
+
     if (inputValue === "" || /^\d+$/.test(inputValue)) {
       setValue(inputValue);
       setError("");
@@ -28,11 +28,11 @@ export default function PacketCount({ setOptionsFlags }) {
     localStorage.setItem("packet_count", value);
     if (isValidInteger(value)) {
       const flagValue = value ? ` -c ${value}` : "";
-      setOptionsFlags((prevFlags)=>{
-        let newFlags = {...prevFlags}
-        newFlags.packetCount=flagValue
-        return newFlags
-      })
+      setOptionsFlags((prevFlags) => {
+        let newFlags = { ...prevFlags };
+        newFlags.packetCount = flagValue;
+        return newFlags;
+      });
     }
   }, [value]);
 
@@ -41,9 +41,7 @@ export default function PacketCount({ setOptionsFlags }) {
       <label htmlFor="packet_input">
         Packet count?
         {error && (
-          <span style={{ color: "white", marginLeft: "0.5em" }}>
-            ({error})
-          </span>
+          <span style={{ color: "white", marginLeft: "0.5em" }}>({error})</span>
         )}
       </label>
       <input
