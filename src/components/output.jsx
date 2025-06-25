@@ -14,7 +14,11 @@ export default function Output({ optionsFlags, filters, setFilters }) {
         console.error("FilterOutputsContainer not found");
         return;
       }
-      const textContent = container.innerText || container.textContent;
+
+      // Get text content and clean it up to be on one line
+      const textContent = (container.innerText || container.textContent)
+        .replace(/\s+/g, " ") // Replace all whitespace (including newlines) with single spaces
+        .trim(); // Remove leading/trailing whitespace
 
       await navigator.clipboard.writeText(textContent);
     } catch (error) {
@@ -22,8 +26,12 @@ export default function Output({ optionsFlags, filters, setFilters }) {
 
       try {
         const container = document.querySelector(".filterOutputsContainer");
+        const cleanedText = (container.innerText || container.textContent)
+          .replace(/\s+/g, " ")
+          .trim();
+
         const textArea = document.createElement("textarea");
-        textArea.value = container.innerText || container.textContent;
+        textArea.value = cleanedText;
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand("copy");
@@ -35,7 +43,7 @@ export default function Output({ optionsFlags, filters, setFilters }) {
     }
 
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000); // message disappears after 2 seconds
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (

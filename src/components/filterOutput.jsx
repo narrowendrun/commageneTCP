@@ -3,6 +3,7 @@ import { TiDeleteOutline, TiEdit } from "react-icons/ti";
 import VxlanForm from "./VXLANform";
 import VlanForm from "./VLANform";
 import MACForm from "./MACform";
+import IPform from "./IPform";
 
 export default function FiltersOutput({
   optionsFlags,
@@ -12,6 +13,7 @@ export default function FiltersOutput({
 }) {
   const [showNames, setShowNames] = useState({});
   const [showEditForms, setShowEditForms] = useState({});
+  const [buttonTexts, setButtonTexts] = useState({}); // Track button text state
 
   const handleToggle = (index) => {
     setShowNames((prev) => ({
@@ -32,6 +34,14 @@ export default function FiltersOutput({
     setShowEditForms((prev) => ({
       ...prev,
       [index]: !prev[index],
+    }));
+  };
+
+  // New function to handle and/or button toggle
+  const handleAndOrToggle = (index) => {
+    setButtonTexts((prev) => ({
+      ...prev,
+      [index]: prev[index] === "and" ? "or" : "and",
     }));
   };
 
@@ -59,12 +69,15 @@ export default function FiltersOutput({
         {Object.keys(filters).map((index) => {
           const firstIndex = Math.min(...Object.keys(filters).map(Number));
           const showEditForm = showEditForms[index] ?? false;
+          const currentButtonText = buttonTexts[index] || "or"; // Default to "or"
 
           return (
             <div className="filter_div" key={index}>
               {index !== firstIndex.toString() ? (
                 filters[index].andor ? (
-                  <button>or</button>
+                  <button onClick={() => handleAndOrToggle(index)}>
+                    {currentButtonText}
+                  </button>
                 ) : (
                   <button style={{ all: "unset" }}>or</button>
                 )
@@ -96,6 +109,11 @@ export default function FiltersOutput({
               filters[index].name == "MAC" &&
               showEditForm ? (
                 <MACForm setFilters={setFilters} index={index} />
+              ) : null}
+              {filters[index].edit &&
+              filters[index].name == "IPv4" &&
+              showEditForm ? (
+                <IPform setFilters={setFilters} index={index} />
               ) : null}
               <TiDeleteOutline
                 className="filterDeleteButton"

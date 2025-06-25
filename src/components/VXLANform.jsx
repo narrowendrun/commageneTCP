@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { macLogic } from "../macLogic";
+import { macLogic, IP_Logic } from "../macLogic";
+
 export default function VxlanForm({ setFilters, index }) {
   const [formData, setFormData] = useState({
     innerSrcMAC: "",
@@ -8,7 +9,13 @@ export default function VxlanForm({ setFilters, index }) {
     innerDstIP: "",
     VNI: "",
   });
-
+  const [outputs, setOutputs] = useState({
+    innerSrcMAC: "",
+    innerDstMAC: "",
+    innerSrcIP: "",
+    innerDstIP: "",
+    VNI: "",
+  });
   const [errors, setErrors] = useState({});
 
   const validateIP = (ip) => {
@@ -26,15 +33,32 @@ export default function VxlanForm({ setFilters, index }) {
     return "";
   };
 
-  const setOptionsFlag = (newFormData) => {
-    let output = "port 4789 and udp[8:2] = 0x0800";
-    output += Object.values(newFormData).join(" ");
-    console.log(output);
+  // Update setFilters directly when outputs change
+  const updateFilter = (newOutputs) => {
+    setFilters((prevFilters) => {
+      let newFilters = { ...prevFilters };
+      const filterParts = [
+        newOutputs.innerSrcMAC,
+        newOutputs.innerDstMAC,
+        newOutputs.innerSrcIP,
+        newOutputs.innerDstIP,
+        newOutputs.VNI,
+      ].filter((part) => part !== "");
+
+      if (filterParts.length > 0) {
+        newFilters[index].filter = filterParts.join(" and ");
+      } else {
+        newFilters[index].filter = "vxlan";
+      }
+
+      return newFilters;
+    });
   };
 
   const handleFieldChange = (fieldName, value) => {
     let error = "";
     let macFilter = "";
+    let newOutputs = { ...outputs };
 
     switch (fieldName) {
       case "innerSrcMAC":
@@ -44,12 +68,28 @@ export default function VxlanForm({ setFilters, index }) {
           macFilter === "invalid mac" || macFilter === "invalid MAC address"
             ? "invalid mac"
             : "";
+        if (macFilter !== "invalid MAC address") {
+          newOutputs[fieldName] = macFilter;
+        } else {
+          newOutputs[fieldName] = "";
+        }
         break;
       case "innerSrcIP":
       case "innerDstIP":
+        let filterValue = IP_Logic(fieldName, value);
+        if (filterValue !== "invalid ip") {
+          newOutputs[fieldName] = filterValue;
+        } else {
+          newOutputs[fieldName] = "";
+        }
         error = validateIP(value);
         break;
       case "VNI":
+        if (value.trim() !== "") {
+          newOutputs.VNI = `udp[11:4] = ${value}`;
+        } else {
+          newOutputs.VNI = "";
+        }
         error = validateVNI(value);
         break;
     }
@@ -58,21 +98,16 @@ export default function VxlanForm({ setFilters, index }) {
       ...prev,
       [fieldName]: error,
     }));
-    const newFormData = {
-      ...formData,
+
+    setFormData((prev) => ({
+      ...prev,
       [fieldName]: value,
-    };
+    }));
 
-    setFormData(newFormData);
+    setOutputs(newOutputs);
 
-    // 👑 Log values when any field changes
-    console.log("innerSrcMAC:", macFilter);
-    console.log("innerDstMAC:", newFormData.innerDstMAC);
-    console.log("innerSrcIP:", newFormData.innerSrcIP);
-    console.log("innerDstIP:", newFormData.innerDstIP);
-    console.log("VNI:", newFormData.VNI);
-
-    setOptionsFlag(newFormData);
+    // Update the filter immediately when user changes input
+    updateFilter(newOutputs);
   };
 
   return (

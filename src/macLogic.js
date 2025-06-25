@@ -56,3 +56,37 @@ export function macLogic(key, value) {
     return `invalid MAC address`;
   }
 }
+
+function IPtoHEX(ip) {
+  if (ip == "" || ip.includes(" ")) return false;
+  if (!ip.includes(" ")) {
+    //splitting the ipv4 string into octets and storing them in an array
+    let arr = ip.split(".");
+    arr = arr
+      .filter((element) => element.trim() !== "")
+      .map((i) => parseInt(i));
+    //validating if array has 4 legit values and converting each element to hex
+    if (arr.length == 4) {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i] == NaN || arr[i] > 255) return `invalid ip`;
+        //convert each value to hex
+        let temp = arr[i].toString(16);
+        if (temp.length == 1) {
+          arr[i] = `0${temp}`;
+        } else {
+          arr[i] = temp;
+        }
+      }
+      return "0x" + arr.join("");
+    }
+  }
+  return "invalid ip";
+}
+export function IP_Logic(key, value) {
+  let ip = IPtoHEX(value);
+  if (ip) {
+    if (key == "innerSrcIP") return `udp[42:4] = ${ip}`;
+    if (key == "innerDstIP") return `udp[46:4] = ${ip}`;
+  }
+  return "";
+}
