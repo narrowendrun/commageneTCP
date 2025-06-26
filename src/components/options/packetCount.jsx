@@ -25,7 +25,7 @@ export default function PacketCount({ setOptionsFlags }) {
   };
 
   useEffect(() => {
-    localStorage.setItem("packet_count", value);
+    localStorage.setItem("tcp_packetCount", value);
     if (isValidInteger(value)) {
       const flagValue = value ? ` -c ${value}` : "";
       setOptionsFlags((prevFlags) => {

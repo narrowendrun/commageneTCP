@@ -4,6 +4,8 @@ import VxlanForm from "./VXLANform";
 import VlanForm from "./VLANform";
 import MACForm from "./MACform";
 import IPform from "./IPform";
+import IP6form from "./IP6form";
+import PortForm from "./portForm";
 
 export default function FiltersOutput({
   optionsFlags,
@@ -116,6 +118,29 @@ export default function FiltersOutput({
               filters[index].name == "IPv4" &&
               showEditForm ? (
                 <IPform setFilters={setFilters} index={index} />
+              ) : null}
+              {filters[index].edit &&
+              filters[index].name == "IPv6" &&
+              showEditForm ? (
+                <IP6form setFilters={setFilters} index={index} />
+              ) : null}
+              {filters[index].edit &&
+              filters[index].name == "UDP" &&
+              showEditForm ? (
+                <PortForm
+                  setFilters={setFilters}
+                  index={index}
+                  protocol={"udp"}
+                />
+              ) : null}
+              {filters[index].edit &&
+              filters[index].name == "TCP" &&
+              showEditForm ? (
+                <PortForm
+                  setFilters={setFilters}
+                  index={index}
+                  protocol={"tcp"}
+                />
               ) : null}
               <TiDeleteOutline
                 className="filterDeleteButton"

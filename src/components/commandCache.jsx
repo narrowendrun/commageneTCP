@@ -36,7 +36,9 @@ export default function CommandCache({ commandCache, setCommandCache }) {
   return (
     <>
       <div className="container section">
-        <h2 className="filtersHeader">Command Cache</h2>
+        <h2 className="filtersHeader">
+          Command Cache {`(${Object.keys(commandCache).length})`}
+        </h2>
         <br />
         <div className="commandCache">
           {Object.keys(commandCache).map((id) => (

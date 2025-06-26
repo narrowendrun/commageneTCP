@@ -72,7 +72,7 @@ export default function Output({
       .writeText(textToCopy)
       .then(() => {
         setCopied2(true);
-        setTimeout(() => setCopied(false), 2000);
+        setTimeout(() => setCopied2(false), 2000);
         setCommandCache((currentcache) => {
           const isDuplicate = Object.values(currentcache).some(
             (entry) => entry.command === textToCopy

@@ -136,6 +136,7 @@
   position: absolute;
   background-color: #819a91;
   width: 200%;
+  min-width: 350px;
   max-width: 650px;
   z-index: 16;
   padding: 5%;

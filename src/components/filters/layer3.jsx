@@ -20,6 +20,18 @@ export default function Layer3({ setFilters }) {
         andor={true}
         edit={true}
       />
+      <FilterToggleButton
+        filterName={"IPv6"}
+        filter={"ip6"}
+        setFilters={setFilters}
+        andor={true}
+        edit={true}
+      />
+      <FilterToggleButton
+        filterName={"PIM"}
+        filter={"ip proto 103"}
+        setFilters={setFilters}
+      />
     </>
   );
 }
