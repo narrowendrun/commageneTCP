@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://narrowendrun.github.io/commageneNew/",
+  "homepage": "https://narrowendrun.github.io/commageneTCP/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
