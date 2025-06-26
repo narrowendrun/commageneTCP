@@ -16,53 +16,60 @@ export default function Output({
 
   const handleCopyFilters = async () => {
     try {
-      const container = document.querySelector(".filterOutputsContainer");
-      if (!container) {
-        console.error("FilterOutputsContainer not found");
-        return;
-      }
+      setShowHide(false);
 
-      // Get text content and clean it up to be on one line
-      const textContent = (container.innerText || container.textContent)
-        .replace(/\s+/g, " ") // Replace all whitespace (including newlines) with single spaces
-        .trim(); // Remove leading/trailing whitespace
-      await navigator.clipboard.writeText(textContent);
-      setCommandCache((currentcache) => {
-        const isDuplicate = Object.values(currentcache).some(
-          (entry) => entry.command === textContent
-        );
-
-        if (isDuplicate) {
-          return currentcache; // Duplicate detected; no need to update or store.
+      // Wait for DOM to update (1 frame delay)
+      requestAnimationFrame(() => {
+        const container = document.querySelector(".filterOutputsContainer");
+        if (!container) {
+          console.error("FilterOutputsContainer not found");
+          return;
         }
 
-        const today = new Date();
-        const f = new Intl.DateTimeFormat("en-in", {
-          dateStyle: "short",
-          timeStyle: "short",
+        const textContent = (container.innerText || container.textContent)
+          .replace(/\s+/g, " ")
+          .trim();
+
+        navigator.clipboard.writeText(textContent).then(() => {
+          setCommandCache((currentcache) => {
+            const isDuplicate = Object.values(currentcache).some(
+              (entry) => entry.command === textContent
+            );
+
+            if (isDuplicate) {
+              return currentcache;
+            }
+
+            const today = new Date();
+            const f = new Intl.DateTimeFormat("en-in", {
+              dateStyle: "short",
+              timeStyle: "short",
+            });
+            const id = crypto.randomUUID();
+
+            const newCache = {
+              ...currentcache,
+              [id]: {
+                id,
+                date: f.format(today),
+                command: textContent,
+                comments: "",
+              },
+            };
+            localStorage.setItem("tcp_commandCache", JSON.stringify(newCache));
+
+            return newCache;
+          });
+
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
         });
-        const id = crypto.randomUUID();
-
-        const newCache = {
-          ...currentcache,
-          [id]: {
-            id,
-            date: f.format(today),
-            command: textContent,
-            comments: "",
-          },
-        };
-        localStorage.setItem("tcp_commandCache", JSON.stringify(newCache));
-
-        return newCache;
       });
     } catch (error) {
       console.error("Failed to copy content:", error);
     }
-
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
+
   function copyWireshark() {
     const container = document.querySelector(".wiresharkContainer");
     if (!container) return;
